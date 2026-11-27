@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b3121f">
+<meta name="mobile-web-app-capable" content="yes">
+<title>FENZ Install Checklist</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --red:#b3121f; --red-d:#8c0d18; --ink:#16181d; --muted:#5d6470; --line:#dfe2e7;
+  --bg:#f3f4f6; --card:#fff; --ok:#13804b; --ok-bg:#e7f5ed; --warn:#b45309; --warn-bg:#fff4e0;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:0 12px calc(110px + env(safe-area-inset-bottom))}
+header.bar{position:sticky;top:0;z-index:20;background:var(--red);color:#fff;
+  padding:calc(10px + env(safe-area-inset-top)) 12px 10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.bar-row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.bar h1{font-size:18px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .sub{font-size:13px;opacity:.85}
+.iconbtn{background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:10px;min-width:44px;height:44px;font-size:20px;cursor:pointer}
+.timers{max-width:720px;margin:8px auto 0;display:flex;gap:8px}
+.timer{flex:1;background:rgba(0,0,0,.18);border-radius:10px;padding:6px 10px}
+.timer b{display:block;font-size:20px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.timer span{font-size:12px;opacity:.85;text-transform:uppercase;letter-spacing:.5px}
+.progress{max-width:720px;margin:8px auto 0;height:6px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+.progress i{display:block;height:100%;background:#fff;transition:width .3s}
+
+.section{margin-top:18px}
+.section h2{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 4px 8px;display:flex;justify-content:space-between}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.06);margin-bottom:10px;border:2px solid transparent}
+label.f{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600}
+label.f:first-child{margin-top:0}
+input[type=text],input[type=number],input[type=datetime-local],textarea,select{
+  width:100%;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;min-height:48px}
+input:focus,textarea:focus{outline:none;border-color:var(--red)}
+textarea{min-height:80px;resize:vertical}
+.row{display:flex;gap:8px;align-items:stretch}
+.row>*{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;
+  min-height:48px;padding:10px 16px;font-weight:600;cursor:pointer;background:#e9ebef;color:var(--ink)}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:active{background:var(--red-d)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line)}
+.btn.small{min-height:40px;padding:6px 12px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}
+.btn.big{min-height:60px;font-size:18px}
+.btn:disabled{opacity:.45}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;min-height:52px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+.seg button.on{border-color:var(--red);background:#fdecee;color:var(--red-d)}
+
+.timefield{display:flex;gap:8px;align-items:center}
+.timefield input{flex:1}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.stat:first-child{border-top:0}
+.stat b{font-variant-numeric:tabular-nums}
+
+.step{position:relative}
+.step.ok{border-color:#bfe3cf;background:linear-gradient(0deg,var(--ok-bg),var(--ok-bg))}
+.step.warn{border-color:#f5c27a}
+.step-head{display:flex;gap:12px;align-items:flex-start}
+.tick{flex:none;width:44px;height:44px;border-radius:12px;border:2.5px solid #b7bdc7;background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;color:#fff;padding:0}
+.tick.on{background:var(--ok);border-color:var(--ok)}
+.tick.static{cursor:default}
+.step-title{flex:1;font-weight:600;font-size:16px;padding-top:2px}
+.hint{font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.pill{display:table;font-size:12px;font-weight:700;border-radius:20px;padding:3px 9px;margin-top:6px}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.meta{font-size:12px;color:var(--muted);margin-top:6px}
+.photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.thumb{width:76px;height:76px;border-radius:10px;object-fit:cover;background:#ddd;cursor:pointer;border:0;padding:0}
+.photo-btns{display:flex;gap:8px;margin-top:10px}
+.photo-btns .btn{flex:1}
+.step .seg{margin-top:10px}
+.notebox{margin-top:10px}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:13px;padding:8px 0 0;cursor:pointer;text-decoration:underline}
+
+.jobcard{display:block;width:100%;text-align:left;cursor:pointer;border:0;font:inherit}
+.jobcard .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.jobcard h3{margin:0;font-size:17px}
+.badge{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap}
+.badge.open{background:var(--warn-bg);color:var(--warn)}
+.badge.done{background:var(--ok-bg);color:var(--ok)}
+.minibar{height:5px;background:#e6e8ec;border-radius:3px;margin-top:10px;overflow:hidden}
+.minibar i{display:block;height:100%;background:var(--ok)}
+.empty{text-align:center;color:var(--muted);padding:40px 20px}
+.banner{background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
+
+.fab{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(243,244,246,0),var(--bg) 30%);z-index:15}
+.fab .inner{max-width:720px;margin:0 auto;display:flex;gap:8px}
+.fab .btn{flex:1}
+
+#modal{position:fixed;inset:0;z-index:50;display:none;background:rgba(10,12,16,.6);align-items:flex-end;justify-content:center}
+#modal.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:720px;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.sheet h3{margin:0 0 10px}
+.sheet ul{padding-left:20px;margin:8px 0 14px}
+.sheet li{margin:4px 0}
+.viewer img{width:100%;border-radius:12px;display:block;max-height:65vh;object-fit:contain;background:#111}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:#22252b;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:90vw;opacity:0;
+  transition:all .25s;pointer-events:none;z-index:60}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.warn{background:var(--warn)}
+.busy{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;z-index:70;font-weight:600}
+.busy.show{display:flex}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<input type="file" id="pickCamera" accept="image/*" capture="environment" hidden>
+<input type="file" id="pickGallery" accept="image/*" multiple hidden>
+<div id="modal"></div>
+<div id="toast"></div>
+<div class="busy" id="busy">Working…</div>
+
+<script>
+/* =====================================================================
+   CHECKLIST DEFINITION — edit this to add / change steps.
+   kind:  'check'  = tick box
+          'photo'  = complete when `min` photos are taken
+          'choice' = pick one of `options`
+   showIf: [stepId, value]  -> only shown when that step's choice == value
+   optPhoto: true            -> photo buttons shown but not required
+   startsInstall / endsInstall -> ticking this stamps the install timer
+   ===================================================================== */
+const CHECKLIST = {
+  pre: [
+    {id:'fc_delay', kind:'check', short:'Firecomm delayed start', startsInstall:true,
+      title:'Call Firecomm – place truck into 15 min delayed start',
+      hint:'Starts the install timer'},
+    {id:'ext_photos', kind:'photo', min:4, short:'Exterior',
+      title:'Photos of vehicle exterior', hint:'Front, rear, driver side, passenger side'},
+    {id:'truck_ok', kind:'check', short:'Truck working', optPhoto:true,
+      title:'Test truck is in working condition', hint:'Note any existing faults before starting'},
+  ],
+  tablet: [
+    {id:'bg', kind:'choice', options:['Yes','No'], short:'Battery guard?',
+      title:'Does the truck have a battery guard installed?'},
+    {id:'bg_photo', kind:'photo', min:1, showIf:['bg','Yes'], short:'Battery guard',
+      title:'Photo of battery guard'},
+    {id:'bat_cable', kind:'photo', min:1, showIf:['bg','No'], short:'Battery terminal',
+      title:'Run cable from main cab to battery', hint:'Take photo of the terminal connection'},
+    {id:'braces', kind:'photo', min:1, short:'Console braces', title:'Install braces to centre console'},
+    {id:'psu', kind:'photo', min:1, short:'Power supply', title:'Install power supply'},
+    {id:'pdm', kind:'photo', min:1, short:'PDM', title:'Install PDM'},
+    {id:'tab_bracket', kind:'photo', min:1, short:'Tablet bracket', title:'Install tablet bracket'},
+    {id:'phone_reloc', kind:'photo', min:1, short:'Smartphone relocated', title:'Relocate smartphone to bracket'},
+    {id:'privacy', kind:'photo', min:1, short:'Privacy handset', title:'Relocate privacy handset'},
+    {id:'t_phone', kind:'photo', min:1, short:'Smartphone charging', title:'Test smartphone charges',
+      hint:'Take photo showing the smartphone charging'},
+    {id:'t_tablet', kind:'photo', min:1, short:'Tablet lead power', title:'Test power at tablet power lead',
+      hint:'Take photo showing power on the tablet lead'},
+    {id:'t_psu', kind:'photo', min:1, short:'Power supply test', title:'Test power at power supply',
+      hint:'Take photo showing power at the power supply'},
+  ],
+  smartphone: [
+    {id:'sp_volt', kind:'choice', options:['12V','24V'], short:'Supply voltage',
+      title:'Constant power supply voltage'},
+    {id:'sp_power', kind:'photo', min:1, short:'Constant power source',
+      title:'Find 12V / 24V constant power supply', hint:'Take photo of the power source'},
+    {id:'sp_bracket', kind:'check', optPhoto:true, short:'Dash bracket',
+      title:'Fit smartphone bracket on dashboard'},
+    {id:'sp_test', kind:'photo', min:1, short:'Smartphone power test',
+      title:'Test power to smartphone', hint:'Take photo showing it charging'},
+  ],
+  post: [
+    {id:'fc_k7', kind:'check', short:'Firecomm K7', endsInstall:true,
+      title:'Call Firecomm – put vehicle into K7 (normal operation)',
+      hint:'Stops the install timer'},
+  ],
+};
+const TYPES = {tablet:'Mobility Tablet', smartphone:'Smartphone'};
+
+/* ============================ helpers ============================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const nowISO = () => new Date().toISOString();
+const pad = n => String(n).padStart(2,'0');
+function toLocalInput(iso){ if(!iso) return ''; const d=new Date(iso);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fromLocalInput(v){ return v ? new Date(v).toISOString() : null; }
+function fmtTime(iso){ if(!iso) return '—'; const d=new Date(iso); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fmtDate(iso){ if(!iso) return ''; const d=new Date(iso); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`; }
+function fmtDT(iso){ return iso ? `${fmtDate(iso)} ${fmtTime(iso)}` : '—'; }
+function dur(a,b){ if(!a) return null; const ms=(b?new Date(b):new Date())-new Date(a); return ms<0?0:ms; }
+function fmtDur(ms, secs){ if(ms==null) return '—'; const t=Math.floor(ms/1000); const h=Math.floor(t/3600), m=Math.floor(t%3600/60), s=t%60;
+  return secs ? `${h}:${pad(m)}:${pad(s)}` : `${h}h ${pad(m)}m`; }
+function safeName(s){ return String(s||'').trim().replace(/[^\w\-]+/g,'_').replace(/^_+|_+$/g,'') || 'NA'; }
+let toastT;
+function toast(msg, warn){ const t=$('#toast'); t.textContent=msg; t.className='show'+(warn?' warn':''); clearTimeout(toastT); toastT=setTimeout(()=>t.className='', warn?4500:2500); }
+function busy(on, msg){ const b=$('#busy'); b.textContent=msg||'Working…'; b.classList.toggle('show', !!on); }
+const LS = {
+  get(k, d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ============================ storage (IndexedDB w/ memory fallback) ============================ */
+const Store = {
+  db:null, mem:{jobs:new Map(), photos:new Map()}, ok:false,
+  async init(){
+    try{
+      this.db = await new Promise((res,rej)=>{
+        const r = indexedDB.open('fenz-install', 1);
+        r.onupgradeneeded = () => { const db=r.result;
+          db.createObjectStore('jobs',{keyPath:'id'});
+          const p=db.createObjectStore('photos',{keyPath:'id'}); p.createIndex('jobId','jobId'); };
+        r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+        setTimeout(()=>rej(new Error('timeout')), 4000);
+      });
+      this.ok = true;
+      try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+    }catch(e){ this.ok=false; }
+  },
+  tx(store, mode){ return this.db.transaction(store, mode).objectStore(store); },
+  req(r){ return new Promise((res,rej)=>{ r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+  async put(store, obj){ if(!this.ok){ this.mem[store].set(obj.id, obj); return; } return this.req(this.tx(store,'readwrite').put(obj)); },
+  async del(store, id){ if(!this.ok){ this.mem[store].delete(id); return; } return this.req(this.tx(store,'readwrite').delete(id)); },
+  async all(store){ if(!this.ok) return [...this.mem[store].values()]; return this.req(this.tx(store,'readonly').getAll()); },
+  async photosFor(jobId){ if(!this.ok) return [...this.mem.photos.values()].filter(p=>p.jobId===jobId);
+    return this.req(this.tx('photos','readonly').index('jobId').getAll(jobId)); },
+};
+
+/* ============================ state ============================ */
+const state = { view:'home', jobs:[], job:null, photos:[], pendingStep:null };
+let saveT;
+function saveJob(immediate){
+  const j = state.job; if(!j) return; j.updated = nowISO();
+  clearTimeout(saveT);
+  const go = () => Store.put('jobs', JSON.parse(JSON.stringify(j))).catch(()=>toast('Could not save!', true));
+  immediate ? go() : (saveT = setTimeout(go, 400));
+}
+
+function newJob(){
+  const last = [...state.jobs].sort((a,b)=>b.created.localeCompare(a.created))[0];
+  const settings = LS.get('fenz-settings', {});
+  return {
+    id: uid(), created: nowISO(), updated: nowISO(), status:'open',
+    tech: settings.tech || '',
+    from: last && last.station ? last.station : '',
+    station:'', callsign:'', rego:'', type:null, ref:'',
+    rental:{ rego: last ? (last.rental?.rego||'') : '', odoStart:'', odoEnd:'' },
+    times:{ travelStart: nowISO(), arrival:null, installStart:null, installEnd:null },
+    steps:{}, custom:[], photoCounts:{}, notes:'', coords:null
+  };
+}
+
+/* ============================ checklist logic ============================ */
+function visibleSteps(j){
+  const mid = j.type ? CHECKLIST[j.type] : [];
+  const list = [...CHECKLIST.pre, ...mid, ...(j.custom||[]), ...CHECKLIST.post];
+  return list.filter(s => !s.showIf || (j.steps[s.showIf[0]]||{}).choice === s.showIf[1]);
+}
+function stepSection(s, j){
+  if(CHECKLIST.pre.includes(s)) return 'pre';
+  if(CHECKLIST.post.includes(s)) return 'post';
+  return 'install';
+}
+function stepComplete(s, j){
+  const st = j.steps[s.id] || {};
+  if(s.kind==='check') return !!st.done;
+  if(s.kind==='choice') return !!st.choice;
+  if(s.kind==='photo') return (j.photoCounts[s.id]||0) >= (s.min||1);
+  return false;
+}
+function needsPhoto(s, j){ return s.kind==='photo' && (j.photoCounts[s.id]||0) < (s.min||1); }
+function jobProgress(j){
+  const v = visibleSteps(j); const extra = 3; // details: station, callsign, type
+  let done = v.filter(s=>stepComplete(s,j)).length;
+  done += (j.station?1:0) + (j.callsign?1:0) + (j.type?1:0);
+  return {done, total: v.length + extra};
+}
+function outstanding(j){
+  const out = [];
+  if(!j.callsign) out.push('Truck callsign'); if(!j.rego) out.push('Truck rego');
+  if(!j.station) out.push('Station name'); if(!j.type) out.push('Install type');
+  if(!j.times.arrival) out.push('Arrival time');
+  visibleSteps(j).forEach(s=>{ if(!stepComplete(s,j)) out.push(s.title + (needsPhoto(s,j)?` (photo ${j.photoCounts[s.id]||0}/${s.min||1})`:'')); });
+  return out;
+}
+function findStep(id){
+  const j = state.job;
+  return [...CHECKLIST.pre, ...CHECKLIST.tablet, ...CHECKLIST.smartphone, ...(j?.custom||[]), ...CHECKLIST.post].find(s=>s.id===id);
+}
+function markStepTime(j, s){
+  const st = j.steps[s.id] = j.steps[s.id] || {};
+  const complete = stepComplete(s,j);
+  if(complete && !st.doneAt) st.doneAt = nowISO();
+  if(!complete) st.doneAt = null;
+  if(complete && s.startsInstall && !j.times.installStart) { j.times.installStart = st.doneAt; toast('Install timer started'); }
+  if(complete && s.endsInstall && !j.times.installEnd) { j.times.installEnd = st.doneAt; toast('Install timer stopped'); }
+  if(complete) remindEarlier(j, s);
+}
+function remindEarlier(j, s){
+  const v = visibleSteps(j); const idx = v.indexOf(s);
+  const missing = v.slice(0, idx).filter(x => needsPhoto(x, j));
+  if(missing.length) setTimeout(()=>toast('📷 Still need photo: ' + missing.map(m=>m.short||m.title).join(', '), true), 300);
+}
+
+/* ============================ rendering ============================ */
+function render(){
+  const app = $('#app');
+  if(state.view==='home') app.innerHTML = renderHome();
+  else app.innerHTML = renderJob();
+  tick();
+}
+
+function renderHome(){
+  const jobs = [...state.jobs].sort((a,b)=>b.created.localeCompare(a.created));
+  const settings = LS.get('fenz-settings', {});
+  let list = jobs.map(j=>{
+    const p = jobProgress(j); const pct = Math.round(p.done/p.total*100);
+    return `<button class="card jobcard" data-action="open" data-id="${j.id}">
+      <div class="top"><div><h3>${esc(j.callsign||'New job')}${j.station?' — '+esc(j.station):''}</h3>
+      <div class="hint">${fmtDT(j.created)}${j.type?' · '+TYPES[j.type]:''}${j.rego?' · '+esc(j.rego):''}</div></div>
+      <span class="badge ${j.status==='done'?'done':'open'}">${j.status==='done'?'Complete':'In progress'}</span></div>
+      <div class="minibar"><i style="width:${pct}%"></i></div>
+      <div class="meta">${p.done}/${p.total} items · Travel ${fmtDur(dur(j.times.travelStart, j.times.arrival))} · Install ${j.times.installStart?fmtDur(dur(j.times.installStart, j.times.installEnd)):'—'}</div>
+    </button>`;
+  }).join('');
+  if(!jobs.length) list = `<div class="empty">No installs yet.<br>Tap <b>Start new job</b> when you leave for the station — the travel timer starts straight away.</div>`;
+  return `
+  <header class="bar"><div class="bar-row"><div style="flex:1"><h1>FENZ Install Checklist</h1>
+    <div class="sub">${esc(settings.tech ? 'Technician: '+settings.tech : 'Set your name in Settings')}</div></div>
+    <button class="iconbtn" data-action="settings" aria-label="Settings">⚙︎</button></div></header>
+  <div class="wrap">
+    ${!Store.ok?`<div class="banner">⚠️ Storage isn't available in this view, so jobs will be lost when you close it. Install the app on your phone for normal use.</div>`:''}
+    <div class="section"><h2><span>Jobs</span><span>${jobs.length}</span></h2>${list}</div>
+  </div>
+  <div class="fab"><div class="inner"><button class="btn primary big" data-action="new">＋ Start new job</button></div></div>`;
+}
+
+function timeField(key, label){
+  const v = state.job.times[key];
+  return `<label class="f">${label}</label>
+  <div class="timefield"><input type="datetime-local" data-time="${key}" value="${toLocalInput(v)}">
+  <button class="btn small" data-action="now" data-key="${key}">Now</button></div>`;
+}
+
+function renderStep(s, j){
+  const st = j.steps[s.id] || {};
+  const done = stepComplete(s, j);
+  const n = j.photoCounts[s.id] || 0;
+  const photos = state.photos.filter(p=>p.stepId===s.id);
+  const warn = needsPhoto(s,j) && isPastStep(s,j);
+  let head;
+  if(s.kind==='check') head = `<button class="tick ${st.done?'on':''}" data-action="toggle" data-step="${s.id}" aria-label="Done">${st.done?'✓':''}</button>`;
+  else head = `<div class="tick static ${done?'on':''}">${done?'✓':(s.kind==='photo'?'📷':'?')}</div>`;
+  let body = '';
+  if(s.kind==='choice') body += `<div class="seg">${s.options.map(o=>`<button class="${st.choice===o?'on':''}" data-action="choice" data-step="${s.id}" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+  const showPhotos = s.kind==='photo' || s.optPhoto || n>0;
+  if(showPhotos){
+    if(photos.length) body += `<div class="photos">${photos.map(p=>`<img class="thumb" src="${p.thumb}" data-action="view" data-id="${p.id}" alt="">`).join('')}</div>`;
+    body += `<div class="photo-btns"><button class="btn ${s.kind==='photo'&&!done?'primary':''}" data-action="photo" data-src="camera" data-step="${s.id}">📷 Take photo</button>
+      <button class="btn ghost" data-action="photo" data-src="gallery" data-step="${s.id}">Gallery</button></div>`;
+  }
+  let pill = '';
+  if(s.kind==='photo') pill = done ? `<span class="pill ok">${n} photo${n!==1?'s':''} ✓</span>` : `<span class="pill warn">Photo needed ${n}/${s.min||1}</span>`;
+  const note = st.note!=null && st.note!=='' || st.showNote;
+  return `<div class="card step ${done?'ok':''} ${warn?'warn':''}" id="step-${s.id}">
+    <div class="step-head">${head}<div class="step-title">${esc(s.title)}${s.hint?`<div class="hint">${esc(s.hint)}</div>`:''}${pill}
+    ${st.doneAt&&done?`<div class="meta">Done ${fmtTime(st.doneAt)}</div>`:''}</div>
+    ${s.custom?`<button class="linkbtn" data-action="delcustom" data-step="${s.id}">Remove</button>`:''}</div>
+    ${body}
+    ${note?`<div class="notebox"><textarea data-note="${s.id}" placeholder="Notes for this step">${esc(st.note||'')}</textarea></div>`
+          :`<button class="linkbtn" data-action="addnote" data-step="${s.id}">+ Add note</button>`}
+  </div>`;
+}
+function isPastStep(s, j){ // a photo step is "overdue" if any later step is complete
+  const v = visibleSteps(j); const i = v.indexOf(s);
+  return v.slice(i+1).some(x=>stepComplete(x,j));
+}
+
+function renderJob(){
+  const j = state.job; const t = j.times;
+  const p = jobProgress(j); const pct = Math.round(p.done/p.total*100);
+  const steps = visibleSteps(j);
+  const pre = steps.filter(s=>stepSection(s,j)==='pre');
+  const inst = steps.filter(s=>stepSection(s,j)==='install');
+  const post = steps.filter(s=>stepSection(s,j)==='post');
+  const km = (j.rental.odoStart!=='' && j.rental.odoEnd!=='') ? (Number(j.rental.odoEnd)-Number(j.rental.odoStart)) : null;
+  const done = j.status==='done';
+  return `
+  <header class="bar">
+    <div class="bar-row"><button class="iconbtn" data-action="home" aria-label="Back">←</button>
+      <div style="flex:1;min-width:0"><h1 id="jobTitle">${esc(jobTitle(j))}</h1><div class="sub">${j.type?TYPES[j.type]:'Install type not set'} · ${p.done}/${p.total}</div></div>
+      <button class="iconbtn" data-action="menu" aria-label="Job menu">⋮</button></div>
+    <div class="timers">
+      <div class="timer"><span>Travel</span><b data-live="travel">${fmtDur(dur(t.travelStart,t.arrival),!t.arrival)}</b></div>
+      <div class="timer"><span>Install</span><b data-live="install">${t.installStart?fmtDur(dur(t.installStart,t.installEnd),!t.installEnd):'—'}</b></div>
+    </div>
+    <div class="progress"><i style="width:${pct}%"></i></div>
+  </header>
+  <div class="wrap">
+    ${!Store.ok?`<div class="banner">⚠️ Storage isn't available in this view, so this job will be lost when you close it.</div>`:''}
+    ${done?`<div class="banner" style="background:var(--ok-bg);color:var(--ok)">✓ Job completed ${fmtDT(j.completedAt)}. You can still edit it and re-export.</div>`:''}
+
+    <div class="section"><h2><span>1 · Travel</span></h2><div class="card">
+      <label class="f">Starting location</label>
+      <div class="row"><input type="text" data-field="from" value="${esc(j.from)}" list="placesList" placeholder="e.g. Christchurch office / previous station" style="flex:3">
+      <button class="btn small" data-action="gps" style="flex:1">📍 GPS</button></div>
+      ${j.coords?`<div class="meta">GPS: ${j.coords.lat.toFixed(5)}, ${j.coords.lon.toFixed(5)}</div>`:''}
+      ${timeField('travelStart','Travel start time')}
+      <details style="margin-top:12px"${j.rental.rego||j.rental.odoStart?' open':''}><summary style="font-weight:600;color:var(--muted);cursor:pointer;padding:6px 0">Rental vehicle (optional)</summary>
+        <label class="f">Rental rego</label><input type="text" data-field="rental.rego" value="${esc(j.rental.rego)}" autocapitalize="characters">
+        <div class="row"><div><label class="f">Odometer start</label><input type="number" inputmode="numeric" data-field="rental.odoStart" value="${esc(j.rental.odoStart)}"></div>
+        <div><label class="f">Odometer at station</label><input type="number" inputmode="numeric" data-field="rental.odoEnd" value="${esc(j.rental.odoEnd)}"></div></div>
+        <div class="meta" id="kmOut">${km!=null?`Distance: ${km} km`:''}</div>
+      </details>
+    </div></div>
+
+    <div class="section"><h2><span>2 · Arrival</span></h2><div class="card">
+      <label class="f">Station name</label>
+      <input type="text" data-field="station" value="${esc(j.station)}" list="stationList" placeholder="e.g. Rangiora">
+      ${t.arrival ? timeField('arrival','Arrival time')
+        : `<button class="btn primary block big" style="margin-top:12px" data-action="now" data-key="arrival">Arrived at station</button>`}
+      <div class="stat" style="margin-top:10px"><span>Travel time</span><b data-live="travel2">${fmtDur(dur(t.travelStart,t.arrival))}</b></div>
+    </div></div>
+
+    <div class="section"><h2><span>3 · Truck</span></h2><div class="card">
+      <div class="row"><div><label class="f">Callsign</label><input type="text" data-field="callsign" value="${esc(j.callsign)}" autocapitalize="characters" placeholder="e.g. RANG271"></div>
+      <div><label class="f">Rego</label><input type="text" data-field="rego" value="${esc(j.rego)}" autocapitalize="characters"></div></div>
+      <label class="f">Install type</label>
+      <div class="seg">${Object.entries(TYPES).map(([k,v])=>`<button class="${j.type===k?'on':''}" data-action="type" data-val="${k}">${v}</button>`).join('')}</div>
+    </div></div>
+
+    <div class="section"><h2><span>4 · Pre-install</span></h2>${pre.map(s=>renderStep(s,j)).join('')}</div>
+
+    <div class="section"><h2><span>5 · ${j.type?TYPES[j.type]+' install':'Install'}</span></h2>
+      ${j.type ? inst.map(s=>renderStep(s,j)).join('') : `<div class="card hint">Choose the install type above to show the install steps.</div>`}
+      ${!t.installStart?`<button class="btn ghost block" data-action="now" data-key="installStart">Start install timer now</button>`:''}
+      <button class="btn ghost block" style="margin-top:8px" data-action="addcustom">＋ Add extra step to this job</button>
+    </div>
+
+    <div class="section"><h2><span>6 · Hand back</span></h2>${post.map(s=>renderStep(s,j)).join('')}</div>
+
+    <div class="section"><h2><span>7 · Summary</span></h2><div class="card">
+      ${timeField('installStart','Install start')}
+      ${timeField('installEnd','Install finish')}
+      <div style="margin-top:12px">
+        <div class="stat"><span>Travel time</span><b>${fmtDur(dur(t.travelStart,t.arrival))}</b></div>
+        <div class="stat"><span>Total install time</span><b>${t.installStart?fmtDur(dur(t.installStart,t.installEnd)):'—'}</b></div>
+        <div class="stat"><span>Photos</span><b>${state.photos.length}</b></div>
+      </div>
+      <label class="f">Job / ticket reference (optional)</label><input type="text" data-field="ref" value="${esc(j.ref)}">
+      <label class="f">General notes</label><textarea data-field="notes" placeholder="Issues, parts used, anything FENZ should know">${esc(j.notes)}</textarea>
+    </div>
+      <button class="btn block" data-action="copy">📋 Copy summary text</button>
+      <div class="row" style="margin-top:8px">
+        ${canShareFiles()?`<button class="btn" data-action="share">↗ Share job</button>`:''}
+        <button class="btn" data-action="zip">⬇ Download ZIP</button>
+      </div>
+    </div>
+    <datalist id="placesList">${uniq(state.jobs.flatMap(x=>[x.from,x.station])).map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+    <datalist id="stationList">${uniq(state.jobs.map(x=>x.station)).map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+  </div>
+  <div class="fab"><div class="inner">
+    ${done ? `<button class="btn ok big" data-action="zip">⬇ Export job</button>`
+           : `<button class="btn primary big" data-action="finish">Complete job</button>`}
+  </div></div>`;
+}
+const uniq = a => [...new Set(a.filter(Boolean).map(s=>s.trim()))].sort();
+const jobTitle = j => (j.callsign||'New job') + (j.station ? ' — '+j.station : '');
+
+function tick(){
+  const j = state.job; if(state.view!=='job' || !j) return;
+  const t = j.times;
+  const a = document.querySelector('[data-live="travel"]'); if(a) a.textContent = fmtDur(dur(t.travelStart,t.arrival), !t.arrival);
+  const b = document.querySelector('[data-live="install"]'); if(b) b.textContent = t.installStart ? fmtDur(dur(t.installStart,t.installEnd), !t.installEnd) : '—';
+  const c = document.querySelector('[data-live="travel2"]'); if(c) c.textContent = fmtDur(dur(t.travelStart,t.arrival));
+}
+setInterval(tick, 1000);
+
+/* ============================ modal ============================ */
+function modal(html){ const m=$('#modal'); m.innerHTML=`<div class="sheet">${html}</div>`; m.classList.add('show'); }
+function closeModal(){ const m=$('#modal'); m.classList.remove('show'); m.innerHTML=''; }
+$('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
+
+/* ============================ photos ============================ */
+async function loadBitmap(file){
+  try{ return await createImageBitmap(file, {imageOrientation:'from-image'}); }
+  catch(e){ return await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=URL.createObjectURL(file); }); }
+}
+async function processPhoto(file, caption){
+  const img = await loadBitmap(file);
+  const W = img.width, H = img.height, max = 1920;
+  const sc = Math.min(1, max/Math.max(W,H));
+  const w = Math.round(W*sc), h = Math.round(H*sc);
+  const c = document.createElement('canvas'); c.width=w; c.height=h;
+  const g = c.getContext('2d'); g.drawImage(img,0,0,w,h);
+  const fs = Math.max(16, Math.round(Math.min(w,h)*0.032));
+  const bar = Math.round(fs*1.8);
+  g.fillStyle='rgba(0,0,0,.6)'; g.fillRect(0,h-bar,w,bar);
+  g.fillStyle='#fff'; g.font=`600 ${fs}px system-ui,Roboto,sans-serif`; g.textBaseline='middle';
+  let text = caption; while(g.measureText(text).width > w-fs && text.length>10) text = text.slice(0,-2);
+  g.fillText(text, Math.round(fs*0.5), h-bar/2);
+  const blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
+  const tc = document.createElement('canvas'); const ts = 200/Math.max(w,h);
+  tc.width=Math.round(w*ts); tc.height=Math.round(h*ts); tc.getContext('2d').drawImage(c,0,0,tc.width,tc.height);
+  const thumb = tc.toDataURL('image/jpeg',0.7);
+  if(img.close) img.close();
+  return {blob, thumb};
+}
+async function addPhotos(files, stepId){
+  const j = state.job; const s = findStep(stepId); if(!s || !files.length) return;
+  busy(true, 'Saving photo…');
+  try{
+    for(const f of files){
+      const takenAt = nowISO();
+      const caption = `${j.callsign||'NO CALLSIGN'} | ${j.rego||''} | ${s.short||s.title} | ${fmtDT(takenAt)}`;
+      const {blob, thumb} = await processPhoto(f, caption);
+      const p = {id:uid(), jobId:j.id, stepId, takenAt, thumb, blob};
+      await Store.put('photos', p); state.photos.push(p);
+      j.photoCounts[stepId] = (j.photoCounts[stepId]||0) + 1;
+    }
+    markStepTime(j, s); saveJob(true);
+    const keep = window.scrollY; render(); window.scrollTo(0, keep);
+    toast(`📷 Photo saved — ${s.short||s.title}`);
+  }catch(e){ console.error(e); toast('Could not process photo', true); }
+  busy(false);
+}
+['pickCamera','pickGallery'].forEach(id=>{
+  $('#'+id).addEventListener('change', e=>{ const files=[...e.target.files]; e.target.value=''; if(state.pendingStep) addPhotos(files, state.pendingStep); });
+});
+function viewPhoto(id){
+  const p = state.photos.find(x=>x.id===id); if(!p) return;
+  const s = findStep(p.stepId); const url = URL.createObjectURL(p.blob);
+  modal(`<div class="viewer"><h3>${esc(s?s.title:'Photo')}</h3><img src="${url}" alt=""><div class="meta">${fmtDT(p.takenAt)}</div>
+    <div class="row" style="margin-top:12px"><button class="btn" data-action="close">Close</button>
+    <button class="btn ghost" style="color:var(--red)" data-action="delphoto" data-id="${p.id}">Delete photo</button></div></div>`);
+}
+async function deletePhoto(id){
+  const j = state.job; const p = state.photos.find(x=>x.id===id); if(!p) return;
+  await Store.del('photos', id); state.photos = state.photos.filter(x=>x.id!==id);
+  j.photoCounts[p.stepId] = Math.max(0,(j.photoCounts[p.stepId]||1)-1);
+  const s = findStep(p.stepId); if(s) markStepTime(j, s);
+  saveJob(true); closeModal(); const keep=window.scrollY; render(); window.scrollTo(0,keep); toast('Photo deleted');
+}
+
+/* ============================ export ============================ */
+function summaryText(j){
+  const t=j.times; const L=[];
+  const km = (j.rental.odoStart!=='' && j.rental.odoEnd!=='') ? (Number(j.rental.odoEnd)-Number(j.rental.odoStart)) : null;
+  L.push('FENZ INSTALL SUMMARY','');
+  L.push(`Technician:        ${j.tech||''}`);
+  L.push(`Date:              ${fmtDate(t.travelStart||j.created)}`);
+  if(j.ref) L.push(`Reference:         ${j.ref}`);
+  L.push(`Install type:      ${j.type?TYPES[j.type]:'-'}`);
+  L.push(`Truck callsign:    ${j.callsign}`);
+  L.push(`Truck rego:        ${j.rego}`);
+  L.push(`Station:           ${j.station}`,'');
+  L.push(`Starting location: ${j.from}${j.coords?` (${j.coords.lat.toFixed(5)}, ${j.coords.lon.toFixed(5)})`:''}`);
+  L.push(`Travel start:      ${fmtDT(t.travelStart)}`);
+  L.push(`Arrival:           ${fmtDT(t.arrival)}`);
+  L.push(`Travel time:       ${fmtDur(dur(t.travelStart,t.arrival))}`);
+  if(j.rental.rego||km!=null) L.push(`Rental vehicle:    ${j.rental.rego||''}${km!=null?`  (odo ${j.rental.odoStart} → ${j.rental.odoEnd}, ${km} km)`:''}`);
+  L.push('');
+  L.push(`Install start:     ${fmtDT(t.installStart)}`);
+  L.push(`Install finish:    ${fmtDT(t.installEnd)}`);
+  L.push(`Total install:     ${t.installStart?fmtDur(dur(t.installStart,t.installEnd)):'-'}`,'');
+  L.push('CHECKLIST');
+  visibleSteps(j).forEach(s=>{
+    const st=j.steps[s.id]||{}; const ok=stepComplete(s,j); const n=j.photoCounts[s.id]||0;
+    let line = `[${ok?'x':' '}] ${s.title}`;
+    if(s.kind==='choice') line += `: ${st.choice||'-'}`;
+    if(ok && st.doneAt) line += `  (${fmtTime(st.doneAt)})`;
+    if(n) line += `  [${n} photo${n>1?'s':''}]`;
+    L.push(line); if(st.note) L.push(`      Note: ${st.note}`);
+  });
+  if(j.notes){ L.push('','NOTES', j.notes); }
+  const out = outstanding(j); if(out.length){ L.push('','OUTSTANDING'); out.forEach(o=>L.push(` - ${o}`)); }
+  return L.join('\n');
+}
+const CRC_T = (()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c = c&1 ? 0xEDB88320^(c>>>1) : c>>>1; t[n]=c>>>0; } return t; })();
+function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c = CRC_T[(c^u8[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+async function makeZip(files){
+  const enc = new TextEncoder(); const parts=[], central=[]; let offset=0;
+  const d = new Date(); const dt = ((d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1)) & 0xFFFF;
+  const dd = (((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate()) & 0xFFFF;
+  for(const f of files){
+    const name = enc.encode(f.name);
+    const data = f.data instanceof Uint8Array ? f.data : new Uint8Array(await f.data.arrayBuffer());
+    const crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true);
+    lh.setUint16(10,dt,true); lh.setUint16(12,dd,true); lh.setUint32(14,crc,true); lh.setUint32(18,data.length,true);
+    lh.setUint32(22,data.length,true); lh.setUint16(26,name.length,true); lh.setUint16(28,0,true);
+    parts.push(lh.buffer, name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true);
+    ch.setUint16(10,0,true); ch.setUint16(12,dt,true); ch.setUint16(14,dd,true); ch.setUint32(16,crc,true);
+    ch.setUint32(20,data.length,true); ch.setUint32(24,data.length,true); ch.setUint16(28,name.length,true);
+    ch.setUint32(42,offset,true);
+    central.push(ch.buffer, name);
+    offset += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((a,b)=>a+(b.byteLength),0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true);
+  end.setUint32(12,cdSize,true); end.setUint32(16,offset,true);
+  return new Blob([...parts, ...central, end.buffer], {type:'application/zip'});
+}
+function exportName(j){ return `FENZ_${safeName(j.callsign)}_${safeName(j.station)}_${(j.times.travelStart||j.created).slice(0,10)}`; }
+async function buildZip(j){
+  const base = exportName(j); const enc = new TextEncoder();
+  const files = [{name:`${base}/summary.txt`, data:enc.encode(summaryText(j))}];
+  const order = visibleSteps(j).map(s=>s.id);
+  const photos = [...state.photos].sort((a,b)=> (order.indexOf(a.stepId)-order.indexOf(b.stepId)) || a.takenAt.localeCompare(b.takenAt));
+  const per = {};
+  photos.forEach(p=>{
+    const s = findStep(p.stepId); const idx = order.indexOf(p.stepId); per[p.stepId]=(per[p.stepId]||0)+1;
+    const nn = pad(idx>=0?idx+1:99);
+    files.push({name:`${base}/photos/${nn}_${safeName(s?(s.short||s.title):p.stepId)}_${per[p.stepId]}.jpg`, data:p.blob});
+  });
+  const meta = JSON.parse(JSON.stringify(j)); files.push({name:`${base}/job.json`, data:enc.encode(JSON.stringify(meta,null,2))});
+  return {blob: await makeZip(files), name: base+'.zip'};
+}
+function canShareFiles(){
+  try{ return window.top===window && !!navigator.canShare && navigator.canShare({files:[new File(['x'],'x.txt',{type:'text/plain'})]}); }catch(e){ return false; }
+}
+async function downloadBlob(blob, filename){
+  if(window.claude && typeof window.claude.use==='function'){
+    try{
+      const d = await window.claude.use('downloads');
+      if(d){ try{ await d.save({filename, data:blob}); toast('Saved'); return; }
+             catch(e){ if(e && e.code==='declined') return; if(e && e.code==='host_unavailable'){ toast('Saving isn’t available in this app — open it in a browser.', true); return; } } }
+    }catch(e){}
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 60000);
+}
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); toast('Summary copied'); return; }catch(e){}
+  const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('Summary copied'); }catch(e){ toast('Copy failed', true); } ta.remove();
+}
+
+/* ============================ actions ============================ */
+async function openJob(id){
+  const j = state.jobs.find(x=>x.id===id); if(!j) return;
+  state.job = j; state.view='job';
+  state.photos = (await Store.photosFor(j.id)).sort((a,b)=>a.takenAt.localeCompare(b.takenAt));
+  location.hash = 'job'; render(); window.scrollTo(0,0);
+}
+function goHome(){ saveJob(true); state.view='home'; state.job=null; state.photos=[]; if(location.hash) history.replaceState(null,'',location.pathname+location.search); render(); window.scrollTo(0,0); }
+window.addEventListener('hashchange', ()=>{ if(!location.hash && state.view==='job') goHome(); });
+
+document.addEventListener('click', async e=>{
+  const el = e.target.closest('[data-action]'); if(!el) return;
+  const a = el.dataset.action; const j = state.job;
+  const rerender = () => { const y=window.scrollY; render(); window.scrollTo(0,y); };
+  switch(a){
+    case 'new': { const nj=newJob(); state.jobs.push(nj); await Store.put('jobs', nj); openJob(nj.id); toast('Travel timer started'); break; }
+    case 'open': openJob(el.dataset.id); break;
+    case 'home': goHome(); break;
+    case 'settings': {
+      const s = LS.get('fenz-settings', {});
+      modal(`<h3>Settings</h3><label class="f">Technician name</label><input type="text" id="setTech" value="${esc(s.tech||'')}">
+        <div class="row" style="margin-top:14px"><button class="btn" data-action="close">Cancel</button><button class="btn primary" data-action="savesettings">Save</button></div>`);
+      break; }
+    case 'savesettings': { LS.set('fenz-settings', {tech: $('#setTech').value.trim()}); closeModal(); render(); break; }
+    case 'close': closeModal(); break;
+    case 'now': { const k=el.dataset.key; j.times[k]=nowISO(); saveJob(true); rerender();
+      if(k==='arrival') toast('Arrived — travel time ' + fmtDur(dur(j.times.travelStart,j.times.arrival)));
+      break; }
+    case 'type': {
+      if(j.type && j.type!==el.dataset.val && visibleSteps(j).some(s=>stepSection(s,j)==='install' && !s.custom && stepComplete(s,j))){
+        modal(`<h3>Change install type?</h3><p>Steps already done for ${TYPES[j.type]} will be hidden (their photos are kept).</p>
+          <div class="row"><button class="btn" data-action="close">Cancel</button><button class="btn primary" data-action="settype" data-val="${el.dataset.val}">Change</button></div>`);
+      } else { j.type = el.dataset.val; saveJob(true); rerender(); }
+      break; }
+    case 'settype': j.type = el.dataset.val; closeModal(); saveJob(true); rerender(); break;
+    case 'toggle': { const s=findStep(el.dataset.step); const st=j.steps[s.id]=j.steps[s.id]||{}; st.done=!st.done; markStepTime(j,s); saveJob(true); rerender(); break; }
+    case 'choice': { const s=findStep(el.dataset.step); const st=j.steps[s.id]=j.steps[s.id]||{}; st.choice=el.dataset.val; markStepTime(j,s); saveJob(true); rerender(); break; }
+    case 'photo': { state.pendingStep = el.dataset.step; $(el.dataset.src==='camera'?'#pickCamera':'#pickGallery').click(); break; }
+    case 'view': viewPhoto(el.dataset.id); break;
+    case 'delphoto': deletePhoto(el.dataset.id); break;
+    case 'addnote': { const st=j.steps[el.dataset.step]=j.steps[el.dataset.step]||{}; st.showNote=true; rerender();
+      const ta=document.querySelector(`[data-note="${el.dataset.step}"]`); ta && ta.focus(); break; }
+    case 'addcustom':
+      modal(`<h3>Add extra step</h3><label class="f">What needs doing?</label><input type="text" id="cTitle" placeholder="e.g. Fit antenna splitter">
+        <label class="f">Type</label><div class="seg" id="cKind"><button class="on" data-action="ckind" data-val="photo">Needs photo</button><button data-action="ckind" data-val="check">Tick box</button></div>
+        <div class="row" style="margin-top:14px"><button class="btn" data-action="close">Cancel</button><button class="btn primary" data-action="savecustom">Add</button></div>`);
+      setTimeout(()=>$('#cTitle')?.focus(), 50); break;
+    case 'ckind': document.querySelectorAll('#cKind button').forEach(b=>b.classList.toggle('on', b===el)); break;
+    case 'savecustom': {
+      const title = $('#cTitle').value.trim(); if(!title){ toast('Enter a step name', true); break; }
+      const kind = document.querySelector('#cKind button.on').dataset.val;
+      j.custom.push({id:'c_'+uid(), kind, min:1, title, short:title.slice(0,30), custom:true, optPhoto: kind==='check'});
+      closeModal(); saveJob(true); rerender(); break; }
+    case 'delcustom': j.custom = j.custom.filter(s=>s.id!==el.dataset.step); saveJob(true); rerender(); break;
+    case 'gps': {
+      if(window.top!==window){ toast('GPS is blocked in the preview — it works in the installed app', true); break; }
+      if(!navigator.geolocation){ toast('GPS not available', true); break; }
+      toast('Getting location…');
+      navigator.geolocation.getCurrentPosition(pos=>{
+        j.coords={lat:pos.coords.latitude, lon:pos.coords.longitude, acc:pos.coords.accuracy};
+        if(!j.from) j.from = `${j.coords.lat.toFixed(5)}, ${j.coords.lon.toFixed(5)}`;
+        saveJob(true); rerender(); toast('Location saved');
+      }, err=>toast(err && err.code===1 ? 'Location permission denied — allow it in Chrome site settings' : 'Could not get a GPS fix — type the location in instead', true),
+         {enableHighAccuracy:true, timeout:15000});
+      break; }
+    case 'copy': copyText(summaryText(j)); break;
+    case 'zip': { busy(true,'Building ZIP…'); try{ const z=await buildZip(j); busy(false); await downloadBlob(z.blob, z.name); }catch(err){ busy(false); console.error(err); toast('Export failed', true); } break; }
+    case 'share': {
+      busy(true,'Preparing…');
+      try{ const z=await buildZip(j); busy(false);
+        const file = new File([z.blob], z.name, {type:'application/zip'});
+        await navigator.share({files:[file], title:jobTitle(j), text:summaryText(j)});
+      }catch(err){ busy(false); if(err && err.name!=='AbortError') toast('Share failed — use Download instead', true); }
+      break; }
+    case 'finish': {
+      const out = outstanding(j);
+      if(!j.times.installEnd) out.unshift('Install finish time (will be set to now)');
+      modal(`<h3>${out.length?'Before you finish…':'All done!'}</h3>
+        ${out.length?`<p>These items are still outstanding:</p><ul>${out.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>`:'<p>Every step is complete.</p>'}
+        <div class="row"><button class="btn" data-action="close">Go back</button><button class="btn ${out.length?'':'ok'} primary" data-action="complete">${out.length?'Complete anyway':'Complete job'}</button></div>`);
+      break; }
+    case 'complete': {
+      if(!j.times.installEnd) j.times.installEnd = nowISO();
+      j.status='done'; j.completedAt=nowISO(); saveJob(true); closeModal(); render(); window.scrollTo(0, document.body.scrollHeight);
+      toast('Job complete — export it below'); break; }
+    case 'menu':
+      modal(`<h3>${esc(jobTitle(j))}</h3>
+        ${j.status==='done'?`<button class="btn block" data-action="reopen">Reopen job</button>`:''}
+        <button class="btn block" style="margin-top:8px;color:var(--red)" data-action="askdelete">Delete job</button>
+        <button class="btn ghost block" style="margin-top:8px" data-action="close">Close</button>`); break;
+    case 'reopen': j.status='open'; saveJob(true); closeModal(); rerender(); break;
+    case 'askdelete':
+      modal(`<h3>Delete this job?</h3><p>${esc(jobTitle(j))} and its ${state.photos.length} photo(s) will be removed from this phone. Export it first if you need it.</p>
+        <div class="row"><button class="btn" data-action="close">Cancel</button><button class="btn primary" data-action="dodelete">Delete</button></div>`); break;
+    case 'dodelete': {
+      for(const p of state.photos) await Store.del('photos', p.id);
+      await Store.del('jobs', j.id); state.jobs = state.jobs.filter(x=>x.id!==j.id);
+      closeModal(); state.job=null; goHome(); toast('Job deleted'); break; }
+  }
+});
+
+function setPath(obj, path, val){ const k=path.split('.'); let o=obj; while(k.length>1) o=o[k.shift()]; o[k[0]]=val; }
+document.addEventListener('input', e=>{
+  const el=e.target; const j=state.job; if(!j) return;
+  if(el.dataset.field){ setPath(j, el.dataset.field, el.value); saveJob();
+    if(['callsign','station'].includes(el.dataset.field)){ const t=$('#jobTitle'); if(t) t.textContent=jobTitle(j); }
+    if(el.dataset.field.startsWith('rental.odo')){ const km=(j.rental.odoStart!==''&&j.rental.odoEnd!=='')?Number(j.rental.odoEnd)-Number(j.rental.odoStart):null; const o=$('#kmOut'); if(o) o.textContent = km!=null?`Distance: ${km} km`:''; }
+  }
+  if(el.dataset.note){ const st=j.steps[el.dataset.note]=j.steps[el.dataset.note]||{}; st.note=el.value; saveJob(); }
+});
+document.addEventListener('change', e=>{
+  const el=e.target; const j=state.job; if(!j) return;
+  if(el.dataset.time){ j.times[el.dataset.time]=fromLocalInput(el.value); saveJob(true); const y=window.scrollY; render(); window.scrollTo(0,y); }
+  if(el.dataset.field) saveJob(true); // no re-render here: it would swallow the user's next tap
+});
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) saveJob(true); });
+
+/* ============================ boot ============================ */
+(async function(){
+  await Store.init();
+  try{ state.jobs = await Store.all('jobs'); }catch(e){ state.jobs=[]; }
+  render();
+  if('serviceWorker' in navigator && window.top===window && location.protocol==='https:'){
+    try{ navigator.serviceWorker.register('sw.js'); }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>
